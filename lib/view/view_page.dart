@@ -4,7 +4,7 @@ import '../api_controller/get_api.dart';
 import '../model/get_response.dart';
 
 class ViewData extends StatefulWidget {
-   const ViewData({super.key});
+    const ViewData({super.key});
 
   @override
   State<ViewData> createState() => _ViewDataState();
@@ -13,20 +13,40 @@ class ViewData extends StatefulWidget {
 
 class _ViewDataState extends State<ViewData> {
   ScrollController scrollController = ScrollController();
- List listData =[];
-
+ late List<GetResponse>? listData =[];
+ bool isLoading = true;
+ bool isNoData = false;
+int page = 1;
   @override
   initState(){
-    apiHandler.getDataMethod();
-    //listData = apiHandler.getDataMethod() as List<GetResponse>?;
+    getData(page);
+    page++;
     scrollController.addListener(() {
       if(scrollController.position.maxScrollExtent == scrollController.position.pixels){
-        apiHandler.getDataMethod();
+        getData(page);
+        page++;
       }
     });
     super.initState();
-
   }
+
+   getData(int page) async {
+    ///Adding response to List Directly
+     List<GetResponse> list = (await apiHandler.getDataMethod(page))!;
+     if(list.isEmpty){
+       isNoData = true;
+       setState(() {
+       });
+     }else{
+       isLoading = false;
+       setState(() {
+       });
+     }
+    listData?.addAll(list);
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,11 +58,39 @@ class _ViewDataState extends State<ViewData> {
         child:  Column(
           children: [
 ListView.builder(
-  itemCount: listData.length + 1,
+  itemCount: listData!.length,
 shrinkWrap: true,
   physics: const BouncingScrollPhysics(),
   itemBuilder: (context, index) {
-   return Center(child: Container(child: Text("$listData[index]"),));
+    if(isLoading){
+      const CircularProgressIndicator();
+    }else{
+      return Center(child: Column(
+       children: [
+         Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Text("${listData?[index].userId}"),
+         ),
+         Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Text("id: ${listData?[index].id}"),
+         ),
+         Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Text("title: ${listData?[index].title}"),
+         ),
+       ],
+     ));
+   }
+    // if(isNoData){
+    //   setState(() {
+    //   });
+    //   SnackBar(
+    //     content: Text('No Data Available'),
+    //     duration: Duration(seconds: 3),
+    //   );
+    // }
+    return null;
 },)
           ],
         ),

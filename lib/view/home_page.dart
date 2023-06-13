@@ -11,7 +11,7 @@ class MyHomePage extends StatelessWidget {
       child: Text("Click Me"),
       onPressed:  () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  const ViewData()),
+        MaterialPageRoute(builder: (context) =>  ViewData()),
       )
     ),),
     );

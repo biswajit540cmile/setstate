@@ -8,10 +8,10 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(appBar: AppBar(title: const Text("setState"),),
     body: Center(child: MaterialButton(
-      child: Text("Click Me"),
+      child: const Text("Click Me"),
       onPressed:  () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  ViewData()),
+        MaterialPageRoute(builder: (context) =>  const ViewData()),
       )
     ),),
     );

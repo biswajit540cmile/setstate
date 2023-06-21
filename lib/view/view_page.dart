@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:setstates/view/view_page2.dart';
 
 import '../api_controller/get_api.dart';
 import '../model/get_response.dart';
@@ -10,11 +11,9 @@ class ViewData extends StatefulWidget {
   State<ViewData> createState() => _ViewDataState();
 }
 
-
 class _ViewDataState extends State<ViewData> {
   ScrollController scrollController = ScrollController();
  late List<GetResponse>? listData =[];
- bool isLoading = true;
  bool isNoData = false;
 int page = 1;
   @override
@@ -37,10 +36,6 @@ int page = 1;
        isNoData = true;
        setState(() {
        });
-     }else{
-       isLoading = false;
-       setState(() {
-       });
      }
     listData?.addAll(list);
     setState(() {
@@ -51,45 +46,44 @@ int page = 1;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("View Data"),
+        title:  Text("View Data Page $page"),
+        actions: [
+          InkWell(
+            onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => ViewData2(page: page,),)),
+            child: const Text("Next"),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         controller: scrollController,
         child:  Column(
           children: [
 ListView.builder(
-  itemCount: listData!.length,
+  itemCount: listData!.length + 1,
 shrinkWrap: true,
   physics: const BouncingScrollPhysics(),
   itemBuilder: (context, index) {
-    if(isLoading){
-      const CircularProgressIndicator();
-    }else{
+    //print("$index @@@@@@@@@ ${listData!.length}");
+    if(index < listData!.length){
       return Center(child: Column(
-       children: [
-         Padding(
-           padding: const EdgeInsets.all(8.0),
-           child: Text("${listData?[index].userId}"),
-         ),
-         Padding(
-           padding: const EdgeInsets.all(8.0),
-           child: Text("id: ${listData?[index].id}"),
-         ),
-         Padding(
-           padding: const EdgeInsets.all(8.0),
-           child: Text("title: ${listData?[index].title}"),
-         ),
-       ],
-     ));
-   }
-    // if(isNoData){
-    //   setState(() {
-    //   });
-    //   SnackBar(
-    //     content: Text('No Data Available'),
-    //     duration: Duration(seconds: 3),
-    //   );
-    // }
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("${listData?[index].userId}"),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("id: ${listData?[index].id}"),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("title: ${listData?[index].title}"),
+          ),
+        ],
+      ));
+    }else if(index == listData!.length){
+      return isNoData ? const Center(child: Text("No Data Available"),): const Center(child: CircularProgressIndicator());
+    }
     return null;
 },)
           ],
